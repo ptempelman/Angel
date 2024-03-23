@@ -5,6 +5,7 @@ import fakeData from "../../one_file_analysis_report.json";
 
 import { api } from "~/utils/api";
 import IssueBlock from "~/components/issueBlock";
+import ReportContainer from "~/components/reportContainer";
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
@@ -22,8 +23,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TopBar />
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
+      <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <h1 className="text-3xl font-bold text-white mt-12">Welcome {user?.fullName}</h1>
         {/* <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
@@ -56,7 +57,7 @@ export default function Home() {
             {hello.data ? hello.data.greeting : "Loading tRPC query..."}
           </p>
         </div> */}
-        <IssueBlock filename="main.py" descriptions={fakeData} />
+        <ReportContainer reportId="randomGithubRepo" />
       </main>
     </>
   );

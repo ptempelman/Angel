@@ -11,7 +11,6 @@ interface IssueBlockProps {
     descriptions: Issue[]; // Expect an array of Issue objects
 }
 
-
 const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
     const [expanded, setExpanded] = useState<boolean>(false);
     const issues: Issue[] = descriptions;
@@ -41,9 +40,8 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
             {expanded && (
                 <div className="mt-5">
                     {issues.map((issue, index) => {
-                        // Ensure there is at least one entry in the object
                         const entry = Object.entries(issue)[0];
-                        if (!entry) return null; // or some other handling for empty objects
+                        if (!entry) return null;
 
                         const [type, description] = entry as [keyof Issue, string];
 
@@ -64,7 +62,8 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
                         return (
                             <div key={index} className="flex items-center mb-2.5">
                                 <span className={`${colorClass} mr-2.5`}>●</span>
-                                <span className="text-white">{description}</span>
+                                {/* Encapsulate description text to ensure it wraps within a predefined width */}
+                                <span className="text-white text-xs max-w-xl break-words">{description}</span>
                             </div>
                         );
                     })}
