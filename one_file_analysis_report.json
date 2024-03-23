@@ -1,0 +1,47 @@
+[
+    {
+        "critical": "System failure imminent due to overheating of core processing unit."
+    },
+    {
+        "critical": "Data breach detected, with significant risk of sensitive information being compromised."
+    },
+    {
+        "critical": "Unauthorized access to internal networks identified."
+    },
+    {
+        "critical": "Hardware failure in main server leading to potential data loss."
+    },
+    {
+        "critical": "Encryption protocols outdated, exposing data to interception."
+    },
+    {
+        "moderate": "Memory leaks observed in software version 1.2.4, causing performance degradation."
+    },
+    {
+        "moderate": "Inconsistent data validation across forms, leading to potential data integrity issues."
+    },
+    {
+        "moderate": "API response times are slower than expected, affecting user experience."
+    },
+    {
+        "moderate": "Outdated third-party libraries found, posing a security risk."
+    },
+    {
+        "moderate": "Excessive memory usage in the client application affecting older devices."
+    },
+    {
+        "minor": "User interface misalignments in the settings menu on mobile devices."
+    },
+    {
+        "minor": "Deprecated API usage in module X, though currently not affecting functionality."
+    },
+    {
+        "minor": "Incorrect error messages displayed for certain input validation errors."
+    },
+    {
+        "minor": "Minor spelling errors found in the help documentation."
+    },
+    {
+        "minor": "The color scheme of the dashboard does not meet accessibility standards."
+    }
+]
