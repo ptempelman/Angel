@@ -75,10 +75,35 @@ class GithubRepoExplorer:
         else:
             print(f"Failed to fetch file list: {response.status_code}")
             return {}
+    def build_file_structure_flat(self):
+        # Parse the GitHub URL to extract owner and repo name
+        parsed_url = urlparse(self.repo_url)
+        path_parts = parsed_url.path.strip("/").split("/")
+        owner = path_parts[0]
+        repo = path_parts[1]
 
-# # Example usage
-# repo_url = "https://github.com/AmirFone/heroku_backend"
+        # Fetch file list from the repository
+        response = requests.get(f"https://api.github.com/repos/{owner}/{repo}/git/trees/main?recursive=1")
+
+        # Check if the response was successful
+        if response.status_code == 200:
+            tree = response.json()
+            file_structure = {}
+            for item in tree["tree"]:
+                if "node_modules" in item["path"] or item["path"].lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.mp4', '.avi', '.mov')):
+                    continue  # Skip node modules, images, and videos
+                if item["type"] == "blob":
+                    file_path = item["path"]
+                    file_content = self.get_file_contents_from_url(file_path)
+                    file_structure[file_path] = file_content
+            return file_structure
+        else:
+            print(f"Failed to fetch file list: {response.status_code}")
+            return {}
+
+# Example usage
+# repo_url = "https://github.com/AmirFone/Simulating-Paxos-consistency-algorithm"
 # explorer = GithubRepoExplorer(repo_url)
 
-# file_structure = explorer.build_file_structure()
+# file_structure = explorer.build_file_structure_flat()
 # print('File Structure:', file_structure)
