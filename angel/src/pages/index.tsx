@@ -3,10 +3,9 @@ import Head from "next/head";
 import TopBar from "~/components/topBar";
 import fakeData from "../../one_file_analysis_report.json";
 
-import { api } from "~/utils/api";
 import IssueBlock from "~/components/issueBlock";
-import ReportContainer from "~/components/reportContainer";
 import TopMenu from "~/components/topMenu";
+import { api } from "~/utils/api";
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
@@ -23,16 +22,16 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TopBar />
-      <main className="flex min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+      <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-black to-[#15162c]">
         {/* Sidebar for reports */}
-        <aside className="w-1/4 h-full overflow-y-auto bg-[#2e026d] p-4">
-          {/* Iterate over fakeData to create a list, adjust based on the actual structure of your data */}
+        {/* <aside className="w-1/4 h-full overflow-y-auto bg-[#2e026d] p-4">
           {fakeData.map((report, index) => (
             <button key={index} className="w-full mb-2 rounded p-2 text-left text-white bg-purple-600 hover:bg-purple-700">
               {report.title || `Report ${index + 1}`}
             </button>
           ))}
-        </aside>
+        </aside> */}
+        <TopMenu />
 
         {/* Main content area */}
         <div className="w-3/4 p-4">
