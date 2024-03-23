@@ -40,10 +40,10 @@ def analyze_github_repo(repo_url):
     return analysis_dict
 
 # Example usage
-repo_url = "https://github.com/AmirFone/Simulating-Paxos-consistency-algorithm"
-analysis_results = analyze_github_repo(repo_url)
+# repo_url = "https://github.com/AmirFone/Simulating-Paxos-consistency-algorithm"
+# analysis_results = analyze_github_repo(repo_url)
 
-for file_name, analysis in analysis_results.items():
-    print(f"File: {file_name}")
-    print(f"Security Analysis: {analysis}")
-    print("-" * 50)
+# for file_name, analysis in analysis_results.items():
+#     print(f"File: {file_name}")
+#     print(f"Security Analysis: {analysis}")
+#     print("-" * 50)
