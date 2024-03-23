@@ -14,7 +14,7 @@ def filenames_and_content_from_repo():
 
 def feed_back_to_nextjs(filename, status, report):
 
-    url = "http://localhost:3000/api/data"
+    url = "http://localhost:3000/api/data"  # os.environ.get("NEXTJS_API_URL")
 
     report_json = report if isinstance(report, str) else json.dumps(report)
 
