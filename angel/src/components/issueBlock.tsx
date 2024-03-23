@@ -3,17 +3,31 @@ import React, { useState } from 'react';
 interface Issue {
     critical?: string;
     moderate?: string;
-    minor?: string;
+    low?: string;
 }
 
 interface IssueBlockProps {
     filename: string;
-    descriptions: Issue[]; // Expect an array of Issue objects
+    descriptions: string; // Assuming descriptions is a JSON string representation of Issue[]
 }
 
 const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
     const [expanded, setExpanded] = useState<boolean>(false);
-    const issues: Issue[] = descriptions;
+
+    // Function to safely parse JSON string to Issue[]
+    const parseIssues = (jsonString: string): Issue[] => {
+        try {
+            const parsed = JSON.parse(jsonString);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+        } catch (error) {
+            console.error('Failed to parse descriptions JSON:', error);
+        }
+        return []; // Return an empty array if parsing fails or if the result is not an array
+    };
+
+    const issues: Issue[] = parseIssues(descriptions);
 
     const counts = issues.reduce(
         (acc, issue) => {
@@ -21,7 +35,7 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
             acc[type] = (acc[type] || 0) + 1;
             return acc;
         },
-        { critical: 0, moderate: 0, minor: 0 }
+        { critical: 0, moderate: 0, low: 0 }
     );
 
     return (
@@ -35,11 +49,10 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
                 <div>
                     <span className="text-red-500">● {counts.critical}</span>
                     <span className="ml-2.5 text-orange-500">● {counts.moderate}</span>
-                    <span className="ml-2.5 text-green-500">● {counts.minor}</span>
+                    <span className="ml-2.5 text-green-500">● {counts.low}</span>
                 </div>
             </div>
 
-            {/* Expandable rectangle for descriptions */}
             {expanded && (
                 <div className="border-2 border-white bg-white bg-opacity-10 mt-2 p-4 max-w-[calc(100%-1rem)] mx-auto">
                     {issues.map((issue, index) => {
@@ -56,7 +69,7 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
                             case 'moderate':
                                 colorClass = 'text-orange-500';
                                 break;
-                            case 'minor':
+                            case 'low':
                                 colorClass = 'text-green-500';
                                 break;
                             default:

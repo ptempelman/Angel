@@ -30,7 +30,6 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
 
     const issues = api.issue.getIssuesByReport.useQuery({ reportId: reportId });
 
-
     if (!issues.data || issues.data.length === 0) {
         return (
             <div className="w-36 h-36 flex justify-center items-center">
@@ -38,11 +37,15 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
             </div>);
     }
 
+    console.log("AAAA", fakeData)
+
+    console.log("BBBB", issues.data.map((issue) => issue.description));
+
     return (
         <>
             <div className="w-3/6">
                 {issues.data?.map((issue) => (
-                    <IssueBlock key={issue.id} filename={issue.filename} descriptions={fakeData} />
+                    <IssueBlock key={issue.id} filename={issue.filename} descriptions={issue.description} />
                 ))}
             </div>
         </>
