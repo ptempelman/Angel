@@ -25,10 +25,10 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
     );
 
     return (
-        <div className="m-5 cursor-pointer">
+        <div className="m-2 cursor-pointer">
             {/* Main rectangle */}
             <div
-                className="border-2 border-white p-5 flex justify-between items-center text-white"
+                className="border-2 border-white p-1 flex justify-between items-center text-white"
                 onClick={() => setExpanded(!expanded)}
             >
                 <h2>{filename}</h2>

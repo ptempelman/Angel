@@ -6,6 +6,7 @@ import fakeData from "../../one_file_analysis_report.json";
 import { api } from "~/utils/api";
 import IssueBlock from "~/components/issueBlock";
 import ReportContainer from "~/components/reportContainer";
+import TopMenu from "~/components/topMenu";
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
@@ -24,6 +25,7 @@ export default function Home() {
       </Head>
       <TopBar />
       <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-black to-[#15162c]">
+        <TopMenu />
         <h1 className="text-3xl font-bold text-white mt-12">Welcome {user?.fullName}</h1>
         {/* <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
