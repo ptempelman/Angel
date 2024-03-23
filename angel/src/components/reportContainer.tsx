@@ -2,6 +2,7 @@ import { useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 import fakeData from "../../one_file_analysis_report.json";
 import IssueBlock from "./issueBlock";
+import TopMenu from "./topMenu";
 
 
 export default function ReportContainer({ reportId }: { reportId: string }) {
@@ -14,11 +15,15 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
     const issues = api.issue.getIssuesByReport.useQuery({ reportId: reportId });
 
     return (
-        <div className="w-3/6">
-            {issues.data?.map((issue) => (
-                <IssueBlock key={issue.id} filename={issue.filename} descriptions={fakeData} />
-            ))}
-        </div>
+        <>
+            <div className="w-3/6">
+                {issues.data?.map((issue) => (
+                    <IssueBlock key={issue.id} filename={issue.filename} descriptions={fakeData} />
+                ))}
+            </div>
+        </>
+
+
 
     );
 }

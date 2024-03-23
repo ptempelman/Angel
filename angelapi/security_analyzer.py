@@ -30,7 +30,7 @@ class AnthropicLLM:
         return message.content[0].text
 
 
-def process_file(file_name, file_content, api_key):
+def process_file(file_name, file_content, api_key, reportId):
     feed_back_to_nextjs(file_name, "processing", {})
     llm = AnthropicLLM(api_key)
     prompt = f"""
@@ -103,11 +103,11 @@ example output:
 it is very important to provide the output in the exact format as shown above. no other format will be accepted for this task just return it in the json object format nothing else!! also dont start with "Here are the main security issues categorized as Critical, Moderate, and Low in the provided code:" or anything like that just start with the json object
 """
     response = llm.generate_response(prompt)
-    feed_back_to_nextjs(file_name, "completed", response)
+    feed_back_to_nextjs(reportId, file_name, "completed", response)
     return file_name, response
 
 
-def analyze_github_repo(repo_url):
+def analyze_github_repo(repo_url, reportId):
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     print(f"API KEY {api_key}")
     explorer = GithubRepoExplorer(repo_url)
@@ -115,7 +115,7 @@ def analyze_github_repo(repo_url):
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = [
-            executor.submit(process_file, file_name, file_content, api_key)
+            executor.submit(process_file, file_name, file_content, api_key, reportId)
             for file_name, file_content in file_structure.items()
         ]
         results = [

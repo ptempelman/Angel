@@ -28,6 +28,7 @@ async def process_link(request: Request):
     body = await request.json()
 
     # Extract the "url" key
+    reportId = body.get("reportId")
     link = body.get("url")
 
     print(f"Link: {link}")
@@ -39,7 +40,7 @@ async def process_link(request: Request):
         )
 
     # Analyze the GitHub repository and get the result
-    result = analyze_github_repo(link)
+    result = analyze_github_repo(link, reportId)
 
     # Return the result as JSON response with 200 OK status code
     return JSONResponse(content=result, status_code=status.HTTP_200_OK)
