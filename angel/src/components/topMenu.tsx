@@ -1,9 +1,11 @@
 import { SignInButton, useUser } from "@clerk/nextjs";
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { api } from "~/utils/api";
 
 export default function TopMenu() {
     const { isLoaded: userLoaded, isSignedIn, user } = useUser();
+    const router = useRouter();
     const [githubUrl, setGithubUrl] = useState('');
     const [reportId, setReportId] = useState('');
     const [hasReportBeenCreated, setHasReportBeenCreated] = useState(false); // Track if the report has been created
@@ -33,6 +35,8 @@ export default function TopMenu() {
         }
 
         try {
+            router.push(`/reports/${reportId}`);
+
             const response = await fetch("http://localhost:8000/generate-report", {
                 method: 'POST',
                 headers: {
