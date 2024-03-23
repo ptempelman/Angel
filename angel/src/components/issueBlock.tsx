@@ -11,7 +11,6 @@ interface IssueBlockProps {
     descriptions: Issue[]; // Expect an array of Issue objects
 }
 
-
 const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
     const [expanded, setExpanded] = useState<boolean>(false);
     const issues: Issue[] = descriptions;
@@ -26,24 +25,26 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
     );
 
     return (
-        <div
-            className="border-2 border-white p-5 m-5 cursor-pointer"
-            onClick={() => setExpanded(!expanded)}
-        >
-            <div className="flex justify-between items-center text-white">
-                <h2 className="text-white">{filename}</h2>
+        <div className="m-5 cursor-pointer">
+            {/* Main rectangle */}
+            <div
+                className="border-2 border-white p-5 flex justify-between items-center text-white"
+                onClick={() => setExpanded(!expanded)}
+            >
+                <h2>{filename}</h2>
                 <div>
                     <span className="text-red-500">● {counts.critical}</span>
                     <span className="ml-2.5 text-orange-500">● {counts.moderate}</span>
                     <span className="ml-2.5 text-green-500">● {counts.minor}</span>
                 </div>
             </div>
+
+            {/* Expandable rectangle for descriptions */}
             {expanded && (
-                <div className="mt-5">
+                <div className="border-2 border-white bg-white bg-opacity-10 mt-2 p-4 max-w-[calc(100%-1rem)] mx-auto">
                     {issues.map((issue, index) => {
-                        // Ensure there is at least one entry in the object
                         const entry = Object.entries(issue)[0];
-                        if (!entry) return null; // or some other handling for empty objects
+                        if (!entry) return null;
 
                         const [type, description] = entry as [keyof Issue, string];
 
@@ -64,7 +65,7 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
                         return (
                             <div key={index} className="flex items-center mb-2.5">
                                 <span className={`${colorClass} mr-2.5`}>●</span>
-                                <span className="text-white">{description}</span>
+                                <span className="text-white break-words">{description}</span>
                             </div>
                         );
                     })}

@@ -5,6 +5,7 @@ import fakeData from "../../one_file_analysis_report.json";
 
 import { api } from "~/utils/api";
 import IssueBlock from "~/components/issueBlock";
+import ReportContainer from "~/components/reportContainer";
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });

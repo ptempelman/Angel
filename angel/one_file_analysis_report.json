@@ -6,15 +6,6 @@
         "critical": "Data breach detected, with significant risk of sensitive information being compromised."
     },
     {
-        "critical": "Unauthorized access to internal networks identified."
-    },
-    {
-        "critical": "Hardware failure in main server leading to potential data loss."
-    },
-    {
-        "critical": "Encryption protocols outdated, exposing data to interception."
-    },
-    {
         "moderate": "Memory leaks observed in software version 1.2.4, causing performance degradation."
     },
     {
