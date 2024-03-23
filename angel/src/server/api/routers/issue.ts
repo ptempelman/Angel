@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 
-export const reportRouter = createTRPCRouter({
+export const issueRouter = createTRPCRouter({
 
     createIssue: publicProcedure
         .input(z.object({ reportId: z.string(), status: z.string(), filename: z.string(), description: z.string() }))
