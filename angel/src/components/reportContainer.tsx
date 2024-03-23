@@ -14,7 +14,7 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
     const issues = api.issue.getIssuesByReport.useQuery({ reportId: reportId });
 
     return (
-        <div className="w-4/6">
+        <div className="w-3/6">
             {issues.data?.map((issue) => (
                 <IssueBlock key={issue.id} filename={issue.filename} descriptions={fakeData} />
             ))}

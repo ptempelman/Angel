@@ -7,8 +7,9 @@ import RepoInput from "~/components/repoInputForm"; // Make sure this is the cor
 import FileStructure from "~/components/fileStructure"; // Make sure this is the correct path
 import fakeData from "../../one_file_analysis_report.json";
 
-import { api } from "~/utils/api";
 import IssueBlock from "~/components/issueBlock";
+import TopMenu from "~/components/topMenu";
+import { api } from "~/utils/api";
 
 const fileData: FileItem[] = [
   {
@@ -42,15 +43,26 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TopBar />
-      <div className="flex min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <ReportBar />
-        <main className="flex-grow p-4">
+      <ReportBar />
+      <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-black to-[#15162c]">
+        {/* Sidebar for reports */}
+        {/* <aside className="w-1/4 h-full overflow-y-auto bg-[#2e026d] p-4">
+          {fakeData.map((report, index) => (
+            <button key={index} className="w-full mb-2 rounded p-2 text-left text-white bg-purple-600 hover:bg-purple-700">
+              {report.title || `Report ${index + 1}`}
+            </button>
+          ))}
+        </aside> */}
+        <TopMenu />
+
+        {/* Main content area */}
+        <div className="w-3/4 p-4">
           <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
           <RepoInput />
           <IssueBlock filename="main.py" descriptions={fakeData} />
           <FileStructure structure={fileData} />
-        </main>
-      </div>
+              </div>
+      </main>
     </>
   );
 }

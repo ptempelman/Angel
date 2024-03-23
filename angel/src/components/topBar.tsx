@@ -6,7 +6,7 @@ export default function TopBar() {
 
     return (
         <div className="flex items-center justify-between w-full px-4 py-2 bg-white/10">
-            <h1 className="text-xl font-bold text-black">KnowFlow</h1>
+            <h1 className="text-xl font-bold text-black">Angel</h1>
             {!isSignedIn && <SignInButton />}
             {isSignedIn && <UserButton appearance={{
                 elements: {
