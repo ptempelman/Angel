@@ -8,7 +8,7 @@ export default function TopMenu() {
     // Function to trigger API call
     const handleApiCall = async () => {
         try {
-            const response = await fetch("http://localhost:8000/", {
+            const response = await fetch("http://localhost:8000/generate-report", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import requests
 from urllib.parse import urlparse
 import anthropic
@@ -5,6 +6,9 @@ import concurrent.futures
 from github_api_test import GithubRepoExplorer
 import os
 from status_api import feed_back_to_nextjs
+
+load_dotenv()
+
 
 class AnthropicLLM:
     def __init__(self, api_key):
@@ -20,15 +24,14 @@ class AnthropicLLM:
         message = self.client.messages.create(
             model="claude-3-opus-20240229",
             max_tokens=4096,
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
+            messages=[{"role": "user", "content": prompt}],
         )
-        
+
         return message.content[0].text
 
+
 def process_file(file_name, file_content, api_key):
-    # feed_back_to_nextjs(file_name, "processing", {})
+    feed_back_to_nextjs(file_name, "processing", {})
     llm = AnthropicLLM(api_key)
     prompt = f"""
 Given this code in file {file_name}:
@@ -100,28 +103,36 @@ example output:
 it is very important to provide the output in the exact format as shown above. no other format will be accepted for this task just return it in the json object format nothing else!! also dont start with "Here are the main security issues categorized as Critical, Moderate, and Low in the provided code:" or anything like that just start with the json object
 """
     response = llm.generate_response(prompt)
+    feed_back_to_nextjs(file_name, "completed", response)
     return file_name, response
+
+
 def analyze_github_repo(repo_url):
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     print(f"API KEY {api_key}")
     explorer = GithubRepoExplorer(repo_url)
     file_structure = explorer.build_file_structure_flat()
-    
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(process_file, file_name, file_content, api_key) for file_name, file_content in file_structure.items()]
-        results = [future.result() for future in concurrent.futures.as_completed(futures)]
+        futures = [
+            executor.submit(process_file, file_name, file_content, api_key)
+            for file_name, file_content in file_structure.items()
+        ]
+        results = [
+            future.result() for future in concurrent.futures.as_completed(futures)
+        ]
 
     analysis_dict = {file_name: result for file_name, result in results}
     print("analysis_dict:", analysis_dict)
     return analysis_dict
 
-# Example usage
-repo_url = "https://github.com/AmirFone/Simulating-Paxos-consistency-algorithm"
 
-analysis_results = analyze_github_repo(repo_url)
+# # Example usage
+# repo_url = "https://github.com/AmirFone/Simulating-Paxos-consistency-algorithm"
 
-for file_name, analysis in analysis_results.items():
-    print(f"File: {file_name}")
-    print(f"Security Analysis: {analysis}")
-    print("-" * 50)
+# analysis_results = analyze_github_repo(repo_url)
+
+# for file_name, analysis in analysis_results.items():
+#     print(f"File: {file_name}")
+#     print(f"Security Analysis: {analysis}")
+#     print("-" * 50)

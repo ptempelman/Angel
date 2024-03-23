@@ -1,28 +1,28 @@
 // index.tsx
 import { useUser } from "@clerk/nextjs";
 import Head from "next/head";
-import TopBar from "~/components/topBar";
-import ReportBar from "~/components/reportBar";
-import RepoInput from "~/components/repoInputForm"; // Make sure this is the correct path
 import FileStructure from "~/components/fileStructure"; // Make sure this is the correct path
+import RepoInput from "~/components/repoInputForm"; // Make sure this is the correct path
+import ReportBar from "~/components/reportBar";
+import TopBar from "~/components/topBar";
 import fakeData from "../../one_file_analysis_report.json";
 
 import IssueBlock from "~/components/issueBlock";
 import TopMenu from "~/components/topMenu";
 import { api } from "~/utils/api";
 
-const fileData: FileItem[] = [
-  {
-    name: "src",
-    type: "folder",
-    highestSeverity: "critical",
-    children: [
-      { name: "index.tsx", type: "file", highestSeverity: "moderate" },
-      // Add more files or folders as needed
-    ],
-  },
-  // Add more folders or files as needed
-];
+// const fileData: FileItem[] = [
+//   {
+//     name: "src",
+//     type: "folder",
+//     highestSeverity: "critical",
+//     children: [
+//       { name: "index.tsx", type: "file", highestSeverity: "moderate" },
+//       // Add more files or folders as needed
+//     ],
+//   },
+//   // Add more folders or files as needed
+// ];
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
@@ -43,7 +43,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TopBar />
-      <ReportBar />
+      {/* <ReportBar /> */}
       <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-black to-[#15162c]">
         {/* Sidebar for reports */}
         {/* <aside className="w-1/4 h-full overflow-y-auto bg-[#2e026d] p-4">
@@ -58,10 +58,10 @@ export default function Home() {
         {/* Main content area */}
         <div className="w-3/4 p-4">
           <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
-          <RepoInput />
+          {/* <RepoInput /> */}
           <IssueBlock filename="main.py" descriptions={fakeData} />
-          <FileStructure structure={fileData} />
-              </div>
+          {/* <FileStructure structure={fileData} /> */}
+        </div>
       </main>
     </>
   );
