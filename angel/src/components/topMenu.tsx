@@ -1,25 +1,30 @@
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from "~/utils/api";
 
 export default function TopMenu() {
     const { isLoaded: userLoaded, isSignedIn, user } = useUser();
     const [githubUrl, setGithubUrl] = useState('');
-    const [reportId, setReportId] = useState(''); // Use state for reportId
+    const [reportId, setReportId] = useState('');
+    const [hasReportBeenCreated, setHasReportBeenCreated] = useState(false); // Track if the report has been created
 
     const { mutate: createReport } = api.report.createReport.useMutation({
         onSuccess: (data) => {
             console.log('Report created with name', data.name);
             setReportId(data.id); // Update reportId state
+            setHasReportBeenCreated(true); // Update the state to reflect the report creation
         },
         onError: (error) => {
             console.error('Failed to create report:', error);
         },
     });
 
-    if (user) {
-        createReport({ userId: user.id });
-    }
+    useEffect(() => {
+        // Check if user is signed in, user information is loaded, and the report hasn't been created yet
+        if (userLoaded && isSignedIn && user && !hasReportBeenCreated) {
+            createReport({ userId: user.id });
+        }
+    }, [userLoaded, isSignedIn, user, hasReportBeenCreated]); // Dependencies
 
     const handleApiCall = async () => {
         if (!reportId) {

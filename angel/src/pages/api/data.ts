@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { api } from '~/utils/api';
+import { db } from '~/server/db';
 
-export default function handler(
+export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
@@ -26,19 +26,17 @@ export default function handler(
         return;
     }
 
-    const { mutate: createIssue } = api.issue.createIssue.useMutation();
-
     switch (status) {
         case 'processing':
             console.log(`Processing file: ${filename}`, result);
 
             // Save the file and status to the database
-            createIssue({
-                reportId,
-                status,
-                filename,
-                description: "",
-            });
+            // createIssue({
+            //     reportId,
+            //     status,
+            //     filename,
+            //     description: "",
+            // });
 
             res.status(202).json({ message: 'File is being processed', filename, result });
             break;
@@ -46,12 +44,20 @@ export default function handler(
             console.log(`File processing completed: ${filename}`, result);
 
             // Save the result to the database
-            createIssue({
-                reportId,
-                status,
-                filename,
-                description: result,
-            });
+            try {
+                const issue = await db.issue.create({
+                    data: {
+                        reportId: reportId,
+                        status: status,
+                        filename: filename,
+                        description: result,
+                    },
+                });
+                res.status(200).json({ message: 'File processing completed', issue });
+            } catch (error) {
+                console.error('Error creating issue:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
 
             res.status(200).json({ message: 'File processing completed', filename, result });
             break;
