@@ -2,14 +2,15 @@ import json
 
 import requests
 
-
+from security_analyzer import analyze_github_repo
 def create_claude_api_call_with_file_content():
     prompt = ...
     pass
 
 
 def filenames_and_content_from_repo():
-    pass
+    # Return {"filename": "LLM_content", "filename2": "LLM_content2"}    
+    Dict=analyze_github_repo("url")
 
 
 def feed_back_to_nextjs(filename, status, report):
