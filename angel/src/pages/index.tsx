@@ -1,9 +1,10 @@
 import { useUser } from "@clerk/nextjs";
 import Head from "next/head";
-import Link from "next/link";
 import TopBar from "~/components/topBar";
+import fakeData from "../../one_file_analysis_report.json";
 
 import { api } from "~/utils/api";
+import IssueBlock from "~/components/issueBlock";
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
@@ -55,6 +56,7 @@ export default function Home() {
             {hello.data ? hello.data.greeting : "Loading tRPC query..."}
           </p>
         </div> */}
+        <IssueBlock filename="main.py" descriptions={fakeData} />
       </main>
     </>
   );
