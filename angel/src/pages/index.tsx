@@ -1,18 +1,38 @@
+// index.tsx
 import { useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import TopBar from "~/components/topBar";
+import ReportBar from "~/components/reportBar";
+import RepoInput from "~/components/repoInputForm"; // Make sure this is the correct path
+import FileStructure from "~/components/fileStructure"; // Make sure this is the correct path
 import fakeData from "../../one_file_analysis_report.json";
 
 import { api } from "~/utils/api";
 import IssueBlock from "~/components/issueBlock";
-import ReportContainer from "~/components/reportContainer";
+
+const fileData: FileItem[] = [
+  {
+    name: "src",
+    type: "folder",
+    highestSeverity: "critical",
+    children: [
+      { name: "index.tsx", type: "file", highestSeverity: "moderate" },
+      // Add more files or folders as needed
+    ],
+  },
+  // Add more folders or files as needed
+];
 
 export default function Home() {
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
 
   const { isLoaded: userLoaded, isSignedIn, user } = useUser();
 
-  api.user.createUser.useQuery({ id: user?.id, email: user?.primaryEmailAddress?.emailAddress ?? null, name: user?.fullName });
+  api.user.createUser.useQuery({
+    id: user?.id,
+    email: user?.primaryEmailAddress?.emailAddress ?? null,
+    name: user?.fullName
+  });
 
   return (
     <>
@@ -22,24 +42,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TopBar />
-      <main className="flex min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        {/* Sidebar for reports */}
-        <aside className="w-1/4 h-full overflow-y-auto bg-[#2e026d] p-4">
-          {/* Iterate over fakeData to create a list, adjust based on the actual structure of your data */}
-          {fakeData.map((report, index) => (
-            <button key={index} className="w-full mb-2 rounded p-2 text-left text-white bg-purple-600 hover:bg-purple-700">
-              {report.title || `Report ${index + 1}`}
-            </button>
-          ))}
-        </aside>
-
-        {/* Main content area */}
-        <div className="w-3/4 p-4">
+      <div className="flex min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <ReportBar />
+        <main className="flex-grow p-4">
           <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
-          {/* ... rest of your main content */}
+          <RepoInput />
           <IssueBlock filename="main.py" descriptions={fakeData} />
-        </div>
-      </main>
+          <FileStructure structure={fileData} />
+        </main>
+      </div>
     </>
   );
 }
