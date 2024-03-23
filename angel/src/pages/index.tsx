@@ -13,7 +13,6 @@ export default function Home() {
 
   api.user.createUser.useQuery({ id: user?.id, email: user?.primaryEmailAddress?.emailAddress ?? null, name: user?.fullName });
 
-
   return (
     <>
       <Head>
@@ -22,41 +21,23 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TopBar />
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
-        {/* <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <p className="text-2xl text-white">
-            {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-          </p>
-        </div> */}
-        <IssueBlock filename="main.py" descriptions={fakeData} />
+      <main className="flex min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        {/* Sidebar for reports */}
+        <aside className="w-1/4 h-full overflow-y-auto bg-[#2e026d] p-4">
+          {/* Iterate over fakeData to create a list, adjust based on the actual structure of your data */}
+          {fakeData.map((report, index) => (
+            <button key={index} className="w-full mb-2 rounded p-2 text-left text-white bg-purple-600 hover:bg-purple-700">
+              {report.title || `Report ${index + 1}`}
+            </button>
+          ))}
+        </aside>
+
+        {/* Main content area */}
+        <div className="w-3/4 p-4">
+          <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
+          {/* ... rest of your main content */}
+          <IssueBlock filename="main.py" descriptions={fakeData} />
+        </div>
       </main>
     </>
   );
