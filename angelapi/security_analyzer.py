@@ -48,7 +48,7 @@ def analyze_github_repo(repo_url, reportId):
     print(f"API KEY {api_key}")
     explorer = GithubRepoExplorer(repo_url)
     file_structure = explorer.build_file_structure_flat()
-
+    print('file_structure:', file_structure)
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = [
             executor.submit(process_file, file_name, file_content, api_key, reportId)

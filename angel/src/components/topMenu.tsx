@@ -1,87 +1,122 @@
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from "~/utils/api";
 
-export default function TopMenu() {
-    const { isLoaded: userLoaded, isSignedIn, user } = useUser();
-    const router = useRouter();
-    const [githubUrl, setGithubUrl] = useState('');
-    const [reportId, setReportId] = useState('');
-    const [hasReportBeenCreated, setHasReportBeenCreated] = useState(false); // Track if the report has been created
+interface Issue {
+  title: string;
+  body: string;
+  filename: string;
+}
 
-    const { mutate: createReport } = api.report.createReport.useMutation({
-        onSuccess: (data) => {
-            console.log('Report created with name', data.name);
-            setReportId(data.id); // Update reportId state
-            setHasReportBeenCreated(true); // Update the state to reflect the report creation
+interface TopMenuProps {
+  onAnalysisResults: (results: Issue[]) => void;
+}
+
+export default function TopMenu({ onAnalysisResults }: TopMenuProps) {
+  const { isLoaded: userLoaded, isSignedIn, user } = useUser();
+  const router = useRouter();
+  const [githubUrl, setGithubUrl] = useState('');
+  const [reportId, setReportId] = useState('');
+  const [hasReportBeenCreated, setHasReportBeenCreated] = useState(false);
+
+  const { mutate: createReport } = api.report.createReport.useMutation({
+    onSuccess: (data) => {
+      console.log('Report created with name', data.name);
+      setReportId(data.id);
+      setHasReportBeenCreated(true);
+    },
+    onError: (error) => {
+      console.error('Failed to create report:', error);
+    },
+  });
+
+  const { mutate: updateReportNameById } = api.report.updateReportNameById.useMutation();
+
+  useEffect(() => {
+    if (userLoaded && isSignedIn && user && !hasReportBeenCreated) {
+      createReport({ userId: user.id });
+    }
+  }, [userLoaded, isSignedIn, user, hasReportBeenCreated, createReport]);
+
+  const handleApiCall = async () => {
+    if (!reportId) {
+      console.error("No report ID available");
+      return;
+    }
+
+    try {
+      router.push(`/reports/${reportId}`);
+      updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() || 'report' });
+
+      const response = await fetch("http://localhost:8000/generate-report", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        onError: (error) => {
-            console.error('Failed to create report:', error);
-        },
-    });
+        body: JSON.stringify({ reportId: reportId, url: githubUrl }),
+      });
 
-    const { mutate: updateReportNameById } = api.report.updateReportNameById.useMutation();
+      if (!response.ok) {
+        console.error('API call failed:', response.status, await response.text());
+        return;
+      }
 
-    useEffect(() => {
-        // Check if user is signed in, user information is loaded, and the report hasn't been created yet
-        if (userLoaded && isSignedIn && user && !hasReportBeenCreated) {
-            createReport({ userId: user.id });
-        }
-    }, [userLoaded, isSignedIn, user, hasReportBeenCreated]); // Dependencies
+      const data = await response.json();
+      console.log('Response data:', data);
 
-    const handleApiCall = async () => {
-        if (!reportId) {
-            console.error("No report ID available");
-            return;
-        }
-
+      const issues = [];
+      for (const [file, issuesString] of Object.entries(data)) {
         try {
-            router.push(`/reports/${reportId}`);
-
-            updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() || 'report' });
-
-            const response = await fetch("http://localhost:8000/generate-report", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ reportId: reportId, url: githubUrl }),
+          const fileIssues = JSON.parse(issuesString);
+          if (Array.isArray(fileIssues)) {
+            fileIssues.forEach(issue => {
+              const [severity, note] = Object.entries(issue)[0];
+              issues.push({
+                title: note,
+                body: note,
+                filename: file,
+              });
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to call API');
-            }
-
-            const data = await response.json();
-            console.log(data);
+          }
         } catch (error) {
-            console.error("API call error:", error);
+          console.error(`Error parsing issues for file ${file}:`, error);
         }
-    };
+      }
 
-    return (
-        <div className="flex justify-end items-center p-4">
-            {userLoaded && isSignedIn ? (
-                <>
-                    <input
-                        type="text"
-                        placeholder="Enter GitHub Repo URL"
-                        value={githubUrl}
-                        onChange={(e) => setGithubUrl(e.target.value)}
-                        className="border-2 border-white text-black py-2 px-4 rounded focus:outline-none focus:border-blue-500 transition-colors"
-                        style={{ marginRight: '1rem' }}
-                    />
-                    <button
-                        className="border-2 border-white text-white py-2 px-4 rounded hover:bg-white hover:text-black transition-colors"
-                        onClick={handleApiCall}
-                    >
-                        Generate Analysis
-                    </button>
-                </>
-            ) : (
-                <SignInButton />
-            )}
-        </div>
-    );
+      if (issues.length === 0) {
+        console.error('No valid issues found in the response data');
+        return;
+      }
+
+      onAnalysisResults(issues);
+    } catch (error) {
+      console.error("API call error:", error);
+    }
+  };
+
+  return (
+    <div className="flex justify-end items-center p-4">
+      {userLoaded && isSignedIn ? (
+        <>
+          <input
+            type="text"
+            placeholder="Enter GitHub Repo URL"
+            value={githubUrl}
+            onChange={(e) => setGithubUrl(e.target.value)}
+            className="border-2 border-white text-black py-2 px-4 rounded focus:outline-none focus:border-blue-500 transition-colors"
+            style={{ marginRight: '1rem' }}
+          />
+          <button
+            className="border-2 border-white text-white py-2 px-4 rounded hover:bg-white hover:text-black transition-colors"
+            onClick={handleApiCall}
+          >
+            Generate Analysis
+          </button>
+        </>
+      ) : (
+        <SignInButton />
+      )}
+    </div>
+  );
 }

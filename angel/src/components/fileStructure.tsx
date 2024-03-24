@@ -1,3 +1,4 @@
+// fileStructure.tsx
 import React from 'react';
 
 export interface FileItem { // Export this interface to use in other files

@@ -4,20 +4,65 @@ import Head from "next/head";
 import LeftBar from "~/components/leftBar";
 import TopBar from "~/components/topBar";
 import TopMenu from "~/components/topMenu";
-
+import IssueSlider from '~/components/IssueSlider';
 import { api } from "~/utils/api";
+import { useState } from 'react';
 
+interface Issue {
+  title: string;
+  body: string;
+  filename: string;
+}
 
 export default function Home() {
+  window.addEventListener('unhandledrejection', event => {
+    console.error('Unhandled promise rejection:', event.reason);
+  });  
   const hello = api.post.hello.useQuery({ text: "from tRPC" });
-
   const { isLoaded: userLoaded, isSignedIn, user } = useUser();
-
   api.user.createUser.useQuery({
     id: user?.id,
     email: user?.primaryEmailAddress?.emailAddress ?? null,
-    name: user?.fullName
+    name: user?.fullName,
   });
+
+  const [issues, setIssues] = useState<Issue[]>([]);
+  const [showIssueSlider, setShowIssueSlider] = useState(false);
+
+  const handleAnalysisResults = (results: Issue[]) => {
+    console.log('Analysis results received:', results);
+    setIssues(results);
+    setShowIssueSlider(true);
+    console.log('showIssueSlider state should be set to true now');
+
+  };
+
+  const handleCommitIssue = async (accessToken: string, issueIndex: number) => {
+    try {
+      const issue = issues[issueIndex];
+      const response = await fetch('/api/commit-issues', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessToken, issue }),
+      });
+
+      if (response.ok) {
+        // Issue committed successfully
+        console.log('Issue committed successfully');
+        setIssues((prevIssues) => prevIssues.filter((_, index) => index !== issueIndex));
+        if (issues.length === 1) {
+          setShowIssueSlider(false);
+        }
+      } else {
+        console.error('Failed to commit issue with status:', response.status);
+        console.error('Failed to commit issue');
+      }
+    } catch (error) {
+      console.error('Error committing issue:', error);
+    }
+  };
 
   return (
     <>
@@ -34,11 +79,17 @@ export default function Home() {
             <div className="w-3/4 p-4 flex justify-center mt-8">
               <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
             </div>
-            <TopMenu />
+            <TopMenu onAnalysisResults={handleAnalysisResults} />
+            {showIssueSlider && (
+              <IssueSlider
+                issues={issues}
+                onCommitIssue={handleCommitIssue}
+                onClose={() => setShowIssueSlider(false)}
+              />
+            )}
           </main>
         </div>
       </div>
     </>
-
   );
 }
