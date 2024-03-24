@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { useUser, useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import LeftBar from "~/components/leftBar";
 import TopBar from "~/components/topBar";
 import TopMenu from "~/components/topMenu";
@@ -28,6 +28,7 @@ export default function Home() {
       });
       const repos = await response.json();
       setRepositories(repos);
+      console.log("Fetched repositories:", repos);
     } catch (error) {
       console.error("Error fetching repositories:", error);
     }
