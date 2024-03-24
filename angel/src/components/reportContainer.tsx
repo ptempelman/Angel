@@ -30,7 +30,7 @@ function GradientCircularProgress() {
 
 interface TreeNode {
     _data?: Issue; // Issue data for files, undefined for folders
-    _children: { [key: string]: TreeNode }; // Always initialized to an object, never undefined
+    _children: Record<string, TreeNode>; // Refactored to use Record type
 }
 
 const initializeTreeNode = (): TreeNode => {
@@ -45,18 +45,13 @@ import FolderBlock from "./folderBlock";
 
 export default function ReportContainer({ reportId }: { reportId: string }) {
     const { isLoaded: userLoaded, isSignedIn, user } = useUser();
-
-    if (!user) {
-        return <></>;
-    }
-
     const issues = api.issue.getIssuesByReport.useQuery({ reportId: reportId });
 
     useEffect(() => {
         const startTime = Date.now();
 
         const intervalId = setInterval(() => {
-            issues.refetch();
+            void issues.refetch();
 
             if (Date.now() - startTime > 60000) {
                 clearInterval(intervalId);
@@ -65,6 +60,10 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
 
         return () => clearInterval(intervalId);
     }, [issues, reportId]);
+
+    if (!user) {
+        return <></>;
+    }
 
     if (!issues.data || issues.data.length === 0) {
         return (
@@ -107,7 +106,7 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
                 if (index === parts.length - 1) {
                     current._children[part]!._data = issue;
                 } else {
-                    current = current._children?.[part] || initializeTreeNode();
+                    current = current._children?.[part] ?? initializeTreeNode();
                 }
             });
         });
@@ -117,7 +116,7 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
 
     const parseIssues = (jsonString: string): IssueType[] => {
         try {
-            const parsed = JSON.parse(jsonString);
+            const parsed = JSON.parse(jsonString) as IssueType[];
             if (Array.isArray(parsed)) {
                 return parsed;
             }
@@ -127,9 +126,10 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
         return [];
     };
 
+
     const calculateStatusAndCounts = (node: TreeNode, parentCounts: IssueCounts = { critical: 0, moderate: 0, low: 0 }): { counts: IssueCounts, subtreeHasProcessing: boolean } => {
         let subtreeHasProcessing = false;
-        let localCounts: IssueCounts = { critical: 0, moderate: 0, low: 0 };
+        const localCounts: IssueCounts = { critical: 0, moderate: 0, low: 0 };
 
         if (node._data) {
             const fileData = node._data;
@@ -164,7 +164,7 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
         return { counts: parentCounts, subtreeHasProcessing };
     };
 
-    const renderTree = (node: { [key: string]: TreeNode }, path = ''): JSX.Element[] => {
+    const renderTree = (node: Record<string, TreeNode>, path = ''): JSX.Element[] => {
         return Object.entries(node).map(([key, value]) => {
             const currentPath = path ? `${path}/${key}` : key;
             const result = calculateStatusAndCounts(value);

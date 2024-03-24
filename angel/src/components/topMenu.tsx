@@ -3,6 +3,14 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { api } from "~/utils/api";
 
+interface ApiResponse {
+    reportId: string;
+    filename: string;
+    status: 'processing' | 'completed';
+    result: string;
+}
+
+
 export default function TopMenu() {
     const { isLoaded: userLoaded, isSignedIn, user } = useUser();
     const router = useRouter();
@@ -37,9 +45,9 @@ export default function TopMenu() {
         }
 
         try {
-            router.push(`/reports/${reportId}`);
+            void router.push(`/reports/${reportId}`);
 
-            updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() || 'report' });
+            updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() ?? 'report' });
 
             const response = await fetch("http://localhost:8000/generate-report", {
                 method: 'POST',
@@ -53,7 +61,7 @@ export default function TopMenu() {
                 throw new Error('Failed to call API');
             }
 
-            const data = await response.json();
+            const data: ApiResponse = await response.json() as ApiResponse;
             console.log(data);
         } catch (error) {
             console.error("API call error:", error);

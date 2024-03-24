@@ -1,6 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '~/server/db';
 
+interface ApiResponse {
+    reportId: string;
+    filename: string;
+    status: 'processing' | 'completed';
+    result: string;
+}
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -13,7 +20,9 @@ export default async function handler(
     }
 
     // Assuming JSON with "filename", "status", and "result"
-    const { reportId, filename, status, result } = req.body;
+    const body: ApiResponse = req.body as ApiResponse;
+    const { reportId, filename, status, result } = body;
+
 
 
     if (!reportId || !filename || !status || !result) {

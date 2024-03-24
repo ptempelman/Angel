@@ -32,7 +32,7 @@ const FileBlock = ({ issue }: { issue: Issue }) => {
 
     const parseIssues = (jsonString: string): IssueType[] => {
         try {
-            const parsed = JSON.parse(jsonString);
+            const parsed = JSON.parse(jsonString) as IssueType[];
             if (Array.isArray(parsed)) {
                 return parsed;
             }
