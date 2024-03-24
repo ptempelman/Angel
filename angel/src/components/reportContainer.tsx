@@ -58,7 +58,7 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
         <>
             <div className="w-3/6">
                 {issues.data?.map((issue) => (
-                    <IssueBlock key={issue.id} filename={issue.filename} descriptions={issue.description} />
+                    <IssueBlock key={issue.id} filename={issue.filename} status={issue.status} descriptions={issue.description} />
                 ))}
             </div>
         </>

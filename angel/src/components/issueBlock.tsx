@@ -1,3 +1,4 @@
+import { LinearProgress } from '@mui/material';
 import React, { useState } from 'react';
 
 interface Issue {
@@ -8,10 +9,23 @@ interface Issue {
 
 interface IssueBlockProps {
     filename: string;
+    status: string;
     descriptions: string; // Assuming descriptions is a JSON string representation of Issue[]
 }
 
-const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
+function GradientLinearProgress() {
+    return (
+        <LinearProgress sx={{
+            height: 10, // Adjust the height as needed
+            '& .MuiLinearProgress-bar': {
+                backgroundImage: 'linear-gradient(to right, #e01cd5, #1CB5E0)', // Directly apply the gradient
+            },
+            // Optionally, if you need to adjust the background color of the component itself:
+            backgroundColor: 'rgba(0, 0, 0, 0.1)', // Example background color
+        }} />
+    );
+}
+const IssueBlock: React.FC<IssueBlockProps> = ({ filename, status, descriptions }) => {
     const [expanded, setExpanded] = useState<boolean>(false);
 
     // Function to safely parse JSON string to Issue[]
@@ -46,6 +60,11 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
                 onClick={() => setExpanded(!expanded)}
             >
                 <h2>{filename}</h2>
+                {(status === 'processing') &&
+                    <div className='h-2 w-full ml-2 mr-2'>
+                        <GradientLinearProgress />
+                    </div>
+                }
                 <div>
                     {counts.critical > 0 && (
                         <span className="text-red-500">● {counts.critical}</span>
