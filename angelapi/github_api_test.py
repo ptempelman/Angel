@@ -5,6 +5,45 @@ from urllib.parse import urlparse
 class GithubRepoExplorer:
     def __init__(self, repo_url):
         self.repo_url = repo_url
+        self.files_to_ignore = [
+            ".txt",
+            ".md",
+            ".csv",
+            ".json",
+            ".xml",
+            ".yaml",
+            ".yml",
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".svg",
+            ".bmp",
+            ".ico",
+            ".pdf",
+            ".docx",
+            ".xlsx",
+            ".pptx",
+            ".mp3",
+            ".wav",
+            ".mp4",
+            ".mov",
+            ".avi",
+            ".ogg",
+            ".zip",
+            ".joblib",
+            ".pkl",
+            ".h5",
+            ".pth",
+            ".pt",
+            ".tar",
+            ".gz",
+            ".bz2",
+            ".xz",
+            ".zst",
+            ".rar",
+            ".7z",
+        ]
 
     def get_file_contents_from_url(self, file_path):
         # Extract owner, repo name, and branch from the URL
@@ -44,21 +83,7 @@ class GithubRepoExplorer:
                 for item in tree["tree"]
                 if item["type"] == "blob"
                 and "node_modules" not in item["path"]
-                and not item["path"]
-                .lower()
-                .endswith(
-                    (
-                        ".png",
-                        ".jpg",
-                        ".jpeg",
-                        ".gif",
-                        ".bmp",
-                        ".svg",
-                        ".mp4",
-                        ".avi",
-                        ".mov",
-                    )
-                )
+                and not item["path"].lower().endswith(self.files_to_ignore)
             ]
             return files
         else:
@@ -83,17 +108,7 @@ class GithubRepoExplorer:
             file_structure = {}
             for item in tree["tree"]:
                 if "node_modules" in item["path"] or item["path"].lower().endswith(
-                    (
-                        ".png",
-                        ".jpg",
-                        ".jpeg",
-                        ".gif",
-                        ".bmp",
-                        ".svg",
-                        ".mp4",
-                        ".avi",
-                        ".mov",
-                    )
+                    self.files_to_ignore
                 ):
                     continue  # Skip node modules, images, and videos
                 path = item["path"]
@@ -129,33 +144,7 @@ class GithubRepoExplorer:
             file_structure = {}
             for item in tree["tree"]:
                 if "node_modules" in item["path"] or item["path"].lower().endswith(
-                    [
-                        ".txt",
-                        ".md",
-                        ".csv",
-                        ".json",
-                        ".xml",
-                        ".yaml",
-                        ".yml",
-                        ".jpg",
-                        ".jpeg",
-                        ".png",
-                        ".gif",
-                        ".svg",
-                        ".bmp",
-                        ".ico",
-                        ".pdf",
-                        ".docx",
-                        ".xlsx",
-                        ".pptx",
-                        ".mp3",
-                        ".wav",
-                        ".mp4",
-                        ".mov",
-                        ".avi",
-                        ".ogg",
-                        ".zip",
-                    ]
+                    self.files_to_ignore
                 ):
                     continue  # Skip node modules, images, videos and other data files
                 if item["type"] == "blob":
