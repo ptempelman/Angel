@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import LeftBar from "~/components/leftBar";
@@ -26,6 +26,7 @@ export default function Home() {
       }
       const repos = await response.json();
       setRepositories(repos);
+      console.log("Fetched repositories:", repos);
     } catch (error) {
       console.error("Error fetching repositories:", error);
       setError("Failed to fetch repositories. Please try again later.");
