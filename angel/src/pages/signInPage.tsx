@@ -15,10 +15,10 @@ const AppHome = () => {
         <meta name="description" content="Sign in to Angel.AI" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <TopBar />
       <div className="flex min-h-screen">
         <LeftBar />
         <div className="flex-grow">
-          <TopBar />
           <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-black to-[#15162c]">
             <div className="w-3/4 p-4 flex justify-center mt-8">
               <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
