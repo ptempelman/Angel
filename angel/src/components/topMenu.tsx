@@ -48,6 +48,10 @@ export default function TopMenu() {
         }
 
         try {
+            if (githubUrl === '') {
+                console.error("No GitHub URL provided");
+                return;
+            }
             void router.push(`/reports/${reportId}`);
 
             updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() ?? 'report', analysisType: analysisType });
@@ -96,7 +100,7 @@ export default function TopMenu() {
 
 
                     <button
-                        className="border-2 border-white text-white py-2 px-4 rounded hover:bg-white hover:text-black transition-colors"
+                        className="border-2 border-white text-white py-2 px-4 rounded hover:bg-purple-500 transition-colors"
                         onClick={handleApiCall}
                     >
                         Generate Analysis
