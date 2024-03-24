@@ -8,13 +8,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Specify domains you want to allow
-    allow_credentials=True,
-    allow_methods=["*"],  # Specify HTTP methods to allow
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],  # Specify domains you want to allow
+#     allow_credentials=True,
+#     allow_methods=["*"],  # Specify HTTP methods to allow
+#     allow_headers=["*"],
+# )
 
 
 @app.get("/")
@@ -22,7 +22,7 @@ async def read_root():
     return {"Hello": "World"}
 
 
-@app.post("/generate-report/")
+@app.post("/generate-report")
 async def process_link(request: Request):
     # Read JSON body from the request
     body = await request.json()

@@ -56,7 +56,7 @@ export default function TopMenu() {
 
             updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() ?? 'report', analysisType: analysisType });
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_FASTAPI_ENDPOINT}/generate-report`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_FASTAPI_ENDPOINT}/generate-report/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
