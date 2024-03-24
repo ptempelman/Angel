@@ -7,6 +7,13 @@ Analyze GitHub repositories for security, performance, and maintainability issue
 analysis using multi-threaded processing - Integration with Claude AI for intelligent code analysis 
 
 ## Getting Started 
+![demo_2-ezgif com-video-to-gif-converter](https://github.com/ptempelman/Angel/assets/93888864/aa06a92a-5462-49d6-8251-a7f6cbd72e03)
+![Image 3-24-24 at 2 59 PM](https://github.com/ptempelman/Angel/assets/93888864/6ba884ae-8d94-4849-bb59-e7983928d6dc)
+![Screenshot 2024-03-24 at 2 57 32 PM](https://github.com/ptempelman/Angel/assets/93888864/721dfa8f-37bf-4699-a5af-e1e8834be35d)
+![Screenshot 2024-03-24 at 2 57 49 PM](https://github.com/ptempelman/Angel/assets/93888864/b60fc2c7-e3e1-4a3f-aa10-14bec8dd8de9)
+
+
+
 
 ### Prerequisites
  Node.js (version 14 or above) - Python (version 3.7 or above) - MySQL database 
