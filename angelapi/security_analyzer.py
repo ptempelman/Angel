@@ -14,7 +14,7 @@ class AnthropicLLM:
     def __init__(self, api_key):
         try:
             ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", None)
-            print(f"ANTHROPIC_API_KEY: {ANTHROPIC_API_KEY}")
+            # print(f"ANTHROPIC_API_KEY: {ANTHROPIC_API_KEY}")
             self.api_key = ANTHROPIC_API_KEY
             self.client = anthropic.Anthropic(api_key=self.api_key)
         except Exception as e:
