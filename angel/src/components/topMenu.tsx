@@ -21,6 +21,8 @@ export default function TopMenu() {
         },
     });
 
+    const { mutate: updateReportNameById } = api.report.updateReportNameById.useMutation();
+
     useEffect(() => {
         // Check if user is signed in, user information is loaded, and the report hasn't been created yet
         if (userLoaded && isSignedIn && user && !hasReportBeenCreated) {
@@ -36,6 +38,8 @@ export default function TopMenu() {
 
         try {
             router.push(`/reports/${reportId}`);
+
+            updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() || 'report' });
 
             const response = await fetch("http://localhost:8000/generate-report", {
                 method: 'POST',

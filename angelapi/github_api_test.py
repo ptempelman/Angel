@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 class GithubRepoExplorer:
     def __init__(self, repo_url):
         self.repo_url = repo_url
-        self.files_to_ignore = [
+        self.files_to_ignore = (
             ".txt",
             ".md",
             ".csv",
@@ -43,7 +43,7 @@ class GithubRepoExplorer:
             ".zst",
             ".rar",
             ".7z",
-        ]
+        )
 
     def get_file_contents_from_url(self, file_path):
         # Extract owner, repo name, and branch from the URL

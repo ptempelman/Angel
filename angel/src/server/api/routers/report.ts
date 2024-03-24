@@ -33,5 +33,15 @@ export const reportRouter = createTRPCRouter({
             });
         }),
 
+    updateReportNameById: publicProcedure
+        .input(z.object({ id: z.string(), name: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            return ctx.db.report.update({
+                where: { id: input.id },
+                data: {
+                    name: input.name,
+                },
+            });
+        }),
 
 });

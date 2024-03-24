@@ -3,6 +3,7 @@ import Head from "next/head";
 import TopBar from "~/components/topBar";
 
 import { useRouter } from 'next/router';
+import LeftBar from "~/components/leftBar";
 import ReportContainer from "~/components/reportContainer";
 import { api } from "~/utils/api";
 
@@ -39,12 +40,18 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <TopBar />
-            <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-black to-[#15162c]">
-                <div className="w-3/4 p-4 flex justify-center">
-                    <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
+            <div className="flex min-h-screen">
+                <LeftBar />
+                <div className="flex-grow">
+                    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-black to-[#15162c]">
+                        <div className="w-3/4 p-4 flex justify-center mt-8">
+                            <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
+                        </div>
+                        <ReportContainer reportId={reportId} />
+
+                    </main>
                 </div>
-                <ReportContainer reportId={reportId} />
-            </main>
+            </div>
         </>
     );
 }
