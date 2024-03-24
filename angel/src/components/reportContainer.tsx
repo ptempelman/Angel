@@ -2,7 +2,6 @@ import { useUser } from "@clerk/nextjs";
 import CircularProgress from '@mui/material/CircularProgress';
 import React from "react";
 import { api } from "~/utils/api";
-import fakeData from "../../one_file_analysis_report.json";
 import IssueBlock from "./issueBlock";
 
 
@@ -21,6 +20,9 @@ function GradientCircularProgress() {
         </React.Fragment>
     );
 }
+
+import { useEffect } from 'react';
+
 export default function ReportContainer({ reportId }: { reportId: string }) {
     const { isLoaded: userLoaded, isSignedIn, user } = useUser();
 
@@ -30,16 +32,27 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
 
     const issues = api.issue.getIssuesByReport.useQuery({ reportId: reportId });
 
+    useEffect(() => {
+        const startTime = Date.now();
+
+        const intervalId = setInterval(() => {
+            issues.refetch();
+
+            if (Date.now() - startTime > 60000) {
+                clearInterval(intervalId);
+            }
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [issues, reportId]);
+
     if (!issues.data || issues.data.length === 0) {
         return (
             <div className="w-36 h-36 flex justify-center items-center">
                 <GradientCircularProgress />
-            </div>);
+            </div>
+        );
     }
-
-    console.log("AAAA", fakeData)
-
-    console.log("BBBB", issues.data.map((issue) => issue.description));
 
     return (
         <>

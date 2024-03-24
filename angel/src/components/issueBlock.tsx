@@ -47,9 +47,15 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, descriptions }) => {
             >
                 <h2>{filename}</h2>
                 <div>
-                    <span className="text-red-500">● {counts.critical}</span>
-                    <span className="ml-2.5 text-orange-500">● {counts.moderate}</span>
-                    <span className="ml-2.5 text-green-500">● {counts.low}</span>
+                    {counts.critical > 0 && (
+                        <span className="text-red-500">● {counts.critical}</span>
+                    )}
+                    {counts.moderate > 0 && (
+                        <span className={`ml-2.5 text-orange-500 ${counts.critical > 0 ? '' : 'ml-0'}`}>● {counts.moderate}</span>
+                    )}
+                    {counts.low > 0 && (
+                        <span className={`ml-2.5 text-green-500 ${counts.critical > 0 || counts.moderate > 0 ? '' : 'ml-0'}`}>● {counts.low}</span>
+                    )}
                 </div>
             </div>
 
