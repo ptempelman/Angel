@@ -12,7 +12,7 @@ analysis using multi-threaded processing - Integration with Claude AI for intell
  Node.js (version 14 or above) - Python (version 3.7 or above) - MySQL database 
  
  ### Installation 
-   1. Clone the repository: git clone https://github.com/yourusername/angel.git cd angel
+   1. Clone the repository: git clone [https://github.com/yourusername/angel.git](https://github.com/ptempelman/Angel.git) cd angel
    2. Install frontend dependencies: cd angel npm install
    3. Set up the database: - Create a MySQL database named `angel` - Update the database connection URL in `angel/.env` file
    4. Run database migrations: npx prisma migrate dev
