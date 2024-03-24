@@ -1,52 +1,60 @@
 // IssueModal.tsx
-import React from 'react';
-import { useUser } from '@clerk/nextjs';
+import React, { useState } from 'react';
 
 interface Issue {
-  title: string;
-  body: string;
   filename: string;
+  issue: string;
 }
 
 interface IssueModalProps {
   issues: Issue[];
-  onCommitIssues: (accessToken: string) => void;
   onClose: () => void;
+  onPushIssue: (issue: Issue) => void;
 }
 
-const IssueModal: React.FC<IssueModalProps> = ({ issues, onCommitIssues, onClose }) => {
-  const { user } = useUser();
+const IssueModal: React.FC<IssueModalProps> = ({ issues, onClose, onPushIssue }) => {
+  const [currentIssueIndex, setCurrentIssueIndex] = useState(0);
 
-  const handleCommitIssues = async () => {
-    if (user) {
-      const accessToken = await user.id;
-      onCommitIssues(accessToken);
+  const handlePrevIssue = () => {
+    setCurrentIssueIndex((prevIndex) => (prevIndex - 1 + issues.length) % issues.length);
+  };
+
+  const handleNextIssue = () => {
+    setCurrentIssueIndex((prevIndex) => (prevIndex + 1) % issues.length);
+  };
+
+  const handlePushIssue = () => {
+    const currentIssue = issues[currentIssueIndex];
+    if (currentIssue) {
+      onPushIssue(currentIssue);
     }
   };
 
+  if (issues.length === 0) {
+    return null;
+  }
+
+  const currentIssue = issues[currentIssueIndex];
+
   return (
-    <div className="fixed bottom-0 right-0 m-4 p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Security Issues</h2>
-      <ul>
-        {issues.map((issue, index) => (
-          <li key={index} className="mb-2">
-            <h3 className="font-bold">{issue.title}</h3>
-            <p>{issue.body}</p>
-            <p className="text-sm text-gray-500">{issue.filename}</p>
-          </li>
-        ))}
-      </ul>
-      <div className="flex justify-end mt-4">
-        <button
-          className="px-4 py-2 mr-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={handleCommitIssues}
-        >
-          Commit Issues
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50"
+      style={{ backgroundColor: 'rgba(255, 0, 0, 0.5)', border: '2px solid red' }}
+    >
+      <div className="bg-white p-8 rounded shadow-lg">
+        <h2 className="text-xl font-bold mb-4">Issues</h2>
+        <div>
+          <p>File: {currentIssue.filename}</p>
+          <p>Issue: {currentIssue.issue}</p>
+        </div>
+        <div className="flex justify-between mt-4">
+          <button onClick={handlePrevIssue}>Previous</button>
+          <button onClick={handleNextIssue}>Next</button>
+        </div>
+        <button onClick={handlePushIssue} className="mt-4">
+          Push Issue to Repo
         </button>
-        <button
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-          onClick={onClose}
-        >
+        <button onClick={onClose} className="mt-4">
           Close
         </button>
       </div>
