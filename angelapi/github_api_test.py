@@ -43,6 +43,7 @@ class GithubRepoExplorer:
             ".zst",
             ".rar",
             ".7z",
+            ".gz_"
         )
 
     def get_file_contents_from_url(self, file_path):
