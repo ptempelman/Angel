@@ -1,35 +1,36 @@
-import { useEffect, useState } from "react";
-import { useUser, useAuth } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Head from "next/head";
+import { useEffect, useState } from "react";
 import LeftBar from "~/components/leftBar";
 import TopBar from "~/components/topBar";
 import TopMenu from "~/components/topMenu";
-import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
   const { isLoaded: userLoaded, isSignedIn, user } = useUser();
-  const { getToken } = useAuth();
   const [repositories, setRepositories] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (isSignedIn && !userLoaded) {
+    if (isSignedIn && userLoaded) {
       fetchRepositories();
     }
   }, [isSignedIn, userLoaded]);
 
   const fetchRepositories = async () => {
     try {
-      const token = await getToken();
-      const response = await fetch("https://api.github.com/user/repos", {
-        headers: {
-          Authorization: `token ${token}`,
-        },
-      });
+      setLoading(true);
+      const response = await fetch(`https://api.github.com/users/${user?.username}/repos`);
+      if (!response.ok) {
+        throw new Error(`GitHub API returned status ${response.status}`);
+      }
       const repos = await response.json();
       setRepositories(repos);
     } catch (error) {
       console.error("Error fetching repositories:", error);
+      setError("Failed to fetch repositories. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,27 +47,50 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <TopBar />
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen bg-gray-100">
         <LeftBar />
         <div className="flex-grow">
-          <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-black to-[#15162c]">
-            <div className="w-3/4 p-4 flex justify-center mt-8">
-              <h1 className="text-3xl font-bold text-white">Welcome {user?.fullName}</h1>
-            </div>
-            <TopMenu />
-            {/* Display repositories if fetched */}
-            {repositories !== null && repositories.length > 0 && (
-              <div className="w-3/4 p-4">
-                <h2 className="text-xl font-bold text-white mt-4">Select a Repository:</h2>
-                <ul>
-                  {repositories.map((repo) => (
-                    <li key={repo.id}>
-                      <button onClick={() => handleRepositorySelection(repo)} className="text-white">{repo.full_name}</button>
-                    </li>
-                  ))}
-                </ul>
+          <main className="p-8">
+            <div className="bg-white shadow rounded-md p-6 max-w-2xl mx-auto">
+              <h1 className="text-2xl font-semibold mb-6">Import Git Repository</h1>
+              <div className="mb-6">
+                <input 
+                  type="text" 
+                  placeholder="Search..."
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
               </div>
-            )}
+              <div>
+                {loading && <div>Loading your repositories...</div>}
+                {error && <div className="text-red-500">{error}</div>}
+                {repositories && (
+                  repositories.length > 0 ? (
+                    <ul>
+                      {repositories.map((repo) => (
+                        <li key={repo.id} className="py-2">
+                          <hr className="border-t border-gray-200 my-2" />
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-semibold">{repo.name}</p>
+                            </div>
+                            <button
+                              onClick={() => handleRepositorySelection(repo)}
+                              className="text-white bg-black hover:bg-gray-900 rounded-md px-2 py-1"
+                            >
+                              Import
+                            </button>
+                          </div>
+                          <hr className="border-t border-gray-200 my-2" />
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div>No repositories found.</div>
+                  )
+                )}
+              </div>
+              <a href="#" className="text-indigo-600 hover:underline mt-4 inline-block">Import Third-Party Git Repository</a>
+            </div>
           </main>
         </div>
       </div>
