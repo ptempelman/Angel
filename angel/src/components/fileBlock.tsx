@@ -1,7 +1,8 @@
 import { LinearProgress } from '@mui/material';
-import React, { useState } from 'react';
+import { Issue } from '@prisma/client';
+import { useState } from 'react';
 
-interface Issue {
+interface IssueType {
     critical?: string;
     moderate?: string;
     low?: string;
@@ -25,11 +26,11 @@ function GradientLinearProgress() {
         }} />
     );
 }
-const IssueBlock: React.FC<IssueBlockProps> = ({ filename, status, descriptions }) => {
+
+const FileBlock = ({ issue }: { issue: Issue }) => {
     const [expanded, setExpanded] = useState<boolean>(false);
 
-    // Function to safely parse JSON string to Issue[]
-    const parseIssues = (jsonString: string): Issue[] => {
+    const parseIssues = (jsonString: string): IssueType[] => {
         try {
             const parsed = JSON.parse(jsonString);
             if (Array.isArray(parsed)) {
@@ -38,14 +39,14 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, status, descriptions 
         } catch (error) {
             console.error('Failed to parse descriptions JSON:', error);
         }
-        return []; // Return an empty array if parsing fails or if the result is not an array
+        return [];
     };
 
-    const issues: Issue[] = parseIssues(descriptions);
+    const issues: IssueType[] = parseIssues(issue.description);
 
     const counts = issues.reduce(
         (acc, issue) => {
-            const type = Object.keys(issue)[0] as keyof Issue;
+            const type = Object.keys(issue)[0] as keyof IssueType;
             acc[type] = (acc[type] || 0) + 1;
             return acc;
         },
@@ -53,14 +54,13 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, status, descriptions 
     );
 
     return (
-        <div className="m-2 cursor-pointer">
-            {/* Main rectangle */}
+        <div className="cursor-pointer mb-1">
             <div
                 className="border-2 border-white p-1 flex justify-between items-center text-white"
                 onClick={() => setExpanded(!expanded)}
             >
-                <h2>{filename}</h2>
-                {(status === 'processing') &&
+                <h2>{issue.filename.includes("/") ? issue.filename.split("/").pop() : issue.filename}</h2>
+                {(issue.status === 'processing') &&
                     <div className='h-2 w-full ml-2 mr-2'>
                         <GradientLinearProgress />
                     </div>
@@ -79,38 +79,41 @@ const IssueBlock: React.FC<IssueBlockProps> = ({ filename, status, descriptions 
             </div>
 
             {expanded && (
-                <div className="border-2 border-white bg-white bg-opacity-10 mt-2 p-4 max-w-[calc(100%-1rem)] mx-auto">
-                    {issues.map((issue, index) => {
-                        const entry = Object.entries(issue)[0];
-                        if (!entry) return null;
+                <div className="border-2 bg-white bg-opacity-10 ml-4 max-w-[calc(100%-1rem)]">
+                    <div className="m-3">
+                        {issues.map((issue, index) => {
+                            const entry = Object.entries(issue)[0];
+                            if (!entry) return null;
 
-                        const [type, description] = entry as [keyof Issue, string];
+                            const [type, description] = entry as [keyof IssueType, string];
 
-                        let colorClass = '';
-                        switch (type) {
-                            case 'critical':
-                                colorClass = 'text-red-500';
-                                break;
-                            case 'moderate':
-                                colorClass = 'text-orange-500';
-                                break;
-                            case 'low':
-                                colorClass = 'text-green-500';
-                                break;
-                            default:
-                                colorClass = 'text-gray-500';
-                        }
-                        return (
-                            <div key={index} className="flex items-center mb-2.5">
-                                <span className={`${colorClass} mr-2.5`}>●</span>
-                                <span className="text-white break-words">{description}</span>
-                            </div>
-                        );
-                    })}
+                            let colorClass = '';
+                            switch (type) {
+                                case 'critical':
+                                    colorClass = 'text-red-500';
+                                    break;
+                                case 'moderate':
+                                    colorClass = 'text-orange-500';
+                                    break;
+                                case 'low':
+                                    colorClass = 'text-green-500';
+                                    break;
+                                default:
+                                    colorClass = 'text-gray-500';
+                            }
+                            return (
+                                <div key={index} className="flex items-center mb-2.5">
+                                    <span className={`${colorClass} mr-2.5`}>●</span>
+                                    <span className="text-white break-words">{description}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+
                 </div>
             )}
         </div>
     );
 };
 
-export default IssueBlock;
+export default FileBlock;
