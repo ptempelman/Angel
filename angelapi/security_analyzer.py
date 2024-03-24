@@ -35,8 +35,10 @@ class AnthropicLLM:
 
 
 def process_file(file_name, file_content, api_key, reportId, analysis_type):
+    print("sending back feedback to nextjs")
     feed_back_to_nextjs(reportId, file_name, "processing", {})
     llm = AnthropicLLM(api_key)
+    print("prompting llm to generate response...")
     prompt = f"""
     You are a critical code analyzer. You will generate a report to highlight potential 
     issues regarding code {analysis_type}. The file is {file_name}. 
@@ -53,6 +55,7 @@ def process_file(file_name, file_content, api_key, reportId, analysis_type):
     return only JSON. Here is the file content: {file_content} """
     response = llm.generate_response(prompt, file_name)
     feed_back_to_nextjs(reportId, file_name, "completed", response)
+    print("prompting done and result sent")
     return file_name, response
 
 
@@ -61,6 +64,10 @@ def analyze_github_repo(repo_url, reportId, analysis_type):
     print(f"API KEY {api_key}")
     explorer = GithubRepoExplorer(repo_url)
     file_structure = explorer.build_file_structure_flat()
+
+    print("file structure built")
+
+    print("trying to process files concurrently...")
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = [
