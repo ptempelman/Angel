@@ -6,6 +6,12 @@ import FileBlock from "./fileBlock";
 
 import { Issue } from '@prisma/client';
 
+interface IssueType {
+    critical?: string;
+    moderate?: string;
+    low?: string;
+}
+
 function GradientCircularProgress() {
     return (
         <React.Fragment>
@@ -30,6 +36,8 @@ interface TreeNode {
 const initializeTreeNode = (): TreeNode => {
     return { _children: {} };
 };
+
+type IssueCounts = { critical: number, moderate: number, low: number };
 
 
 import { useEffect } from 'react';
@@ -73,6 +81,17 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
         return node;
     };
 
+    const reduceTypes = (input: Issue[]) => {
+        return input.reduce(
+            (acc, issue) => {
+                const type = Object.keys(issue)[0] as keyof IssueType;
+                acc[type] = (acc[type] || 0) + 1;
+                return acc;
+            },
+            { critical: 0, moderate: 0, low: 0 }
+        );
+    }
+
     const buildFileTree = (issues: Issue[]): TreeNode => {
         const root: TreeNode = initializeTreeNode(); // Initialize the root node
 
@@ -96,18 +115,66 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
         return root;
     };
 
+    const parseIssues = (jsonString: string): IssueType[] => {
+        try {
+            const parsed = JSON.parse(jsonString);
+            if (Array.isArray(parsed)) {
+                return parsed;
+            }
+        } catch (error) {
+            console.error('Failed to parse descriptions JSON:', error);
+        }
+        return [];
+    };
+
+    const calculateStatusAndCounts = (node: TreeNode, parentCounts: IssueCounts = { critical: 0, moderate: 0, low: 0 }): { counts: IssueCounts, subtreeHasProcessing: boolean } => {
+        let subtreeHasProcessing = false;
+        let localCounts: IssueCounts = { critical: 0, moderate: 0, low: 0 };
+
+        if (node._data) {
+            const fileData = node._data;
+            const fileIssues: IssueType[] = parseIssues(fileData.description);
+            const fileCounts = fileIssues.reduce<IssueCounts>((acc, issue) => {
+                const type = Object.keys(issue)[0] as keyof IssueType;
+                acc[type] = (acc[type] || 0) + 1;
+                return acc;
+            }, { critical: 0, moderate: 0, low: 0 });
+
+            Object.keys(fileCounts).forEach(key => {
+                localCounts[key as keyof IssueCounts] += fileCounts[key as keyof IssueCounts];
+            });
+
+            if (fileData.status === 'processing') {
+                subtreeHasProcessing = true;
+            }
+        } else {
+            Object.values(node._children).forEach(child => {
+                const childResult = calculateStatusAndCounts(child);
+                subtreeHasProcessing ||= childResult.subtreeHasProcessing;
+                Object.keys(childResult.counts).forEach(key => {
+                    localCounts[key as keyof IssueCounts] += childResult.counts[key as keyof IssueCounts];
+                });
+            });
+        }
+
+        Object.keys(localCounts).forEach(key => {
+            parentCounts[key as keyof IssueCounts] += localCounts[key as keyof IssueCounts];
+        });
+
+        return { counts: parentCounts, subtreeHasProcessing };
+    };
 
     const renderTree = (node: { [key: string]: TreeNode }, path = ''): JSX.Element[] => {
         return Object.entries(node).map(([key, value]) => {
             const currentPath = path ? `${path}/${key}` : key;
-            // Check if it's a file
+            const result = calculateStatusAndCounts(value);
+            const status = result.subtreeHasProcessing ? 'processing' : 'completed';
+
             if (value._data) {
-                // Ensure the File component is correctly typed to accept `issue` as a prop
-                return <FileBlock issue={value._data} />;
+                return <FileBlock issue={value._data} key={currentPath} />;
             } else {
-                // Recurse into _children if it's a folder
                 return (
-                    <FolderBlock key={currentPath} name={key}>
+                    <FolderBlock key={currentPath} name={key} status={status} counts={result.counts}>
                         {renderTree(value._children, currentPath)}
                     </FolderBlock>
                 );
@@ -120,9 +187,6 @@ export default function ReportContainer({ reportId }: { reportId: string }) {
     return (
         <>
             <div className="w-3/6">
-                {/* {issues.data?.map((issue) => (
-                    <FileBlock key={issue.id} filename={issue.filename} status={issue.status} descriptions={issue.description} />
-                ))} */}
                 {renderTree(fileTree._children)}
             </div>
         </>

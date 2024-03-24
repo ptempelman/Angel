@@ -13,6 +13,9 @@ interface IssueBlockProps {
     descriptions: string; // Assuming descriptions is a JSON string representation of Issue[]
 }
 
+type IssueCounts = { critical: number, moderate: number, low: number };
+
+
 function GradientLinearProgress() {
     return (
         <LinearProgress sx={{
@@ -26,7 +29,7 @@ function GradientLinearProgress() {
     );
 }
 
-const FolderBlock = ({ name, children }: { name: string, children?: React.ReactNode }) => {
+const FolderBlock = ({ name, children, status, counts }: { name: string, children?: React.ReactNode, status: string, counts: IssueCounts }) => {
     const [expanded, setExpanded] = useState<boolean>(false);
 
     return (
@@ -35,8 +38,27 @@ const FolderBlock = ({ name, children }: { name: string, children?: React.ReactN
             <div
                 className="border-2 border-white p-1 flex justify-between items-center text-white mb-1"
                 onClick={() => setExpanded(!expanded)}
+                style={{ minWidth: 0 }} // Ensure div can shrink if necessary
             >
-                <h2>{name.includes("/") ? name.split("/").pop() : name}</h2>
+                <h2 className="flex-shrink-0">{name.includes("/") ? name.split("/").pop() : name}</h2>
+                {status === 'processing' && (
+                    <div className='flex-grow h-2 mx-2'>
+                        <div className="min-w-0 flex-1">
+                            <GradientLinearProgress />
+                        </div>
+                    </div>
+                )}
+                <div className="flex-shrink-0 flex items-center">
+                    {counts.critical > 0 && (
+                        <span className="text-red-500">● {counts.critical}</span>
+                    )}
+                    {counts.moderate > 0 && (
+                        <span className={`ml-2.5 text-orange-500 ${counts.critical > 0 ? '' : 'ml-0'}`}>● {counts.moderate}</span>
+                    )}
+                    {counts.low > 0 && (
+                        <span className={`ml-2.5 text-green-500 ${counts.critical > 0 || counts.moderate > 0 ? '' : 'ml-0'}`}>● {counts.low}</span>
+                    )}
+                </div>
             </div>
 
             {expanded && (
