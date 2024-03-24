@@ -1,0 +1,78 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #000; /* Assuming a black background */
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px; /* 1rem = 16px */
+    align-items: center;
+  }
+  
+  .logo {
+    font-weight: bold;
+    font-size: 24px; /* 1.5rem = 24px */
+  }
+  
+  .navLinks {
+    display: flex;
+    gap: 16px; /* 1rem = 16px */
+  }
+  
+
+  .button {
+    padding: 8px 16px; /* 0.5rem = 8px, 1rem = 16px */
+    border: none;
+    border-radius: 8px; /* 0.5rem = 8px */
+    cursor: pointer;
+    font-size: 16px; /* 1rem = 16px */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effect */
+  }
+  
+  .learnMore {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .learnMore:hover {
+    background-color: #3b3a3a; /* Black background on hover */
+    color: #fff; /* White text on hover */
+    border: 1px solid #fff;
+  }
+  
+  .getStarted {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+  }
+  
+  .getStarted:hover {
+    background-color: #9b9999; /* White background on hover */
+    color: #000; /* Black text on hover */
+  }
+  
+  .mainContent {
+    flex: 1;
+    padding-left: 80px; /* 5rem = 80px */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .title {
+    font-size: 60px; /* 2.5rem = 40px */
+    text-align: left;
+    margin-bottom: 16px; /* 1rem = 16px */
+  }
+  
+  .description {
+    font-size: 25px; /* 1rem = 16px */
+    line-height: 37.5px; /* 1.5 line-height on 16px font-size */
+    text-align: left;
+  }
+  

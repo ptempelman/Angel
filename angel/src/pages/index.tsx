@@ -1,23 +1,32 @@
-// index.tsx
+// pages/index.tsx
+import React, { useRef } from 'react';
 import { useUser } from "@clerk/nextjs";
 import Head from "next/head";
 import LeftBar from "~/components/leftBar";
 import TopBar from "~/components/topBar";
 import TopMenu from "~/components/topMenu";
-
+import HomePage from "~/components/homePage";
+import Footer from "~/components/footer";
 import { api } from "~/utils/api";
 
-
 export default function Home() {
-  const hello = api.post.hello.useQuery({ text: "from tRPC" });
-
+  const footerRef = useRef<HTMLDivElement>(null);  // Specify the type of element the ref will be attached to
   const { isLoaded: userLoaded, isSignedIn, user } = useUser();
 
+  const scrollToFooter = () => {
+    footerRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Call API to create user if needed
   api.user.createUser.useQuery({
     id: user?.id,
     email: user?.primaryEmailAddress?.emailAddress ?? null,
     name: user?.fullName
   });
+
+  if (!userLoaded || !isSignedIn) {
+    return <HomePage onGetStartedClick={scrollToFooter} />;
+  }
 
   return (
     <>
@@ -38,7 +47,7 @@ export default function Home() {
           </main>
         </div>
       </div>
+      <Footer ref={footerRef} />
     </>
-
   );
 }
