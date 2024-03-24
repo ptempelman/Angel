@@ -1,11 +1,14 @@
 import json
+import os
 
+from dotenv import load_dotenv
 import requests
 
+load_dotenv()
 
 def feed_back_to_nextjs(reportId, filename, status, report):
 
-    url = "http://localhost:3000/api/data"  # os.environ.get("NEXTJS_API_URL")
+    url = os.environ.get("NEXTJS_API_URL")
 
     report_json = report if isinstance(report, str) else json.dumps(report)
 
