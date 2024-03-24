@@ -37,7 +37,19 @@ class AnthropicLLM:
 def process_file(file_name, file_content, api_key, reportId):
     feed_back_to_nextjs(reportId, file_name, "processing", {})
     llm = AnthropicLLM(api_key)
-    prompt = f"""Given this code in file {file_name}:  {file_content}  Can you list the main security issues categorized as Critical, Moderate, and Low?  When you classify these issues, make sure they are concise (not longer than 2 sentences). Also, provide some context for where each problem is occurring in the code. Output the results in JSON format like this: [ {{"critical": "Issue 1" }}, {{ "moderate": "Issue 2"}}, {{ "low": "Issue 3"}} ]  example output: [{{"critical": "System failure imminent due to overheating of core processing unit."}},{{ "critical": "Data breach detected, with significant risk of sensitive information being compromised."}},{{"critical": "Unauthorized access to internal networks identified."}},{{"critical": "Hardware failure in main server leading to potential data loss."}}, {{"critical": "Encryption protocols outdated, exposing data to interception."}}, {{"moderate": "Memory leaks observed in software version 1.2.4, causing performance degradation."}},{{"moderate": "Inconsistent data validation across forms, leading to potential data integrity issues." }}, {{ "moderate": "API response times are slower than expected, affecting user experience." }},{{ "moderate": "Outdated third-party libraries found, posing a security risk." }}, {{"moderate": "Excessive memory usage in the client application affecting older devices."}},     {{ "minor": "User interface misalignments in the settings menu on mobile devices."}}, {{"minor": "Deprecated API usage in module X, though currently not affecting functionality."}}, {{ "minor": "Incorrect error messages displayed for certain input validation errors."}},{{"minor": "Minor spelling errors found in the help documentation." }} ] it is very important to provide the output in the exact format as shown above. no other format will be accepted for this task just return it in the json object format nothing else!! also dont start with "Here are the main security issues categorized as Critical, Moderate, and Low in the provided code:" or anything like that just start with the json object """
+    prompt = f"""
+    You are a critical code analyzer. You will generate a report to highlight potential 
+    issues regarding code security and code performance. The file is {file_name}. 
+    You should return ONLY JSON. So in your response, just start with the JSON object, 
+    and say nothing else. The JSON object should have three types of keys, “critical”, 
+    “moderate”, and “minor”. Be reserved in handing out critical labels. The response 
+    should be formatted e.g. like this: [{{"critical": "System failure imminent due to 
+    overheating of core processing unit."}},{{"moderate": "Inconsistent data validation 
+    across forms, leading to potential data integrity issues." }}, {{ "moderate": "API 
+    response times are slower than expected, affecting user experience." }}, {{ "minor": 
+    "User interface misalignments in the settings menu on mobile devices."}}, {{"minor": 
+    "Deprecated API usage in module X, though currently not affecting functionality."}}] . 
+    Remember to return only JSON. Here is the file content: {file_content} """
     response = llm.generate_response(prompt, file_name)
     feed_back_to_nextjs(reportId, file_name, "completed", response)
     return file_name, response
