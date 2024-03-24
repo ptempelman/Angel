@@ -1,17 +1,33 @@
-import React from 'react';
-import Image from 'next/image';
 import { useClerk } from '@clerk/clerk-react';
+import Image from 'next/image';
+import React from 'react';
+import logo from '../../public/logo2.png';
 import styles from '../styles/homePage.module.css';
 
-interface HomePageProps {}
+interface HomePageProps { }
 
 const HomePage: React.FC<HomePageProps> = () => {
   const { openSignIn } = useClerk();
 
+  const gradientTextStyle = {
+    background: 'linear-gradient(135deg, #948BD2, #B678BB, #FD5390)',
+    backgroundSize: '200% 200%', // Enlarging the background size for the animation
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    MozBackgroundClip: 'text',
+    MozTextFillColor: 'transparent',
+    animation: 'gradientShift 3s ease infinite', // Applying the animation
+    display: 'inline' // Required for background-clip in some browsers
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.logo}>Angel</div>
+        <div className="w-3/6 mt-4 ml-4 flex">
+          <Image src={logo} alt="Logo" width={40} height={40} />
+          <h1 className="text-3xl font-bold ml-2" style={gradientTextStyle}>ANGEL</h1>
+
+        </div>
         <div className={styles.navLinks}>
           <button className={`${styles.button} ${styles.learnMore}`}>Learn More</button>
           <button className={`${styles.button} ${styles.getStarted}`} onClick={() => openSignIn()}>Get Started</button>
