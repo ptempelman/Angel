@@ -34,12 +34,12 @@ class AnthropicLLM:
             raise
 
 
-def process_file(file_name, file_content, api_key, reportId):
+def process_file(file_name, file_content, api_key, reportId, analysis_type):
     feed_back_to_nextjs(reportId, file_name, "processing", {})
     llm = AnthropicLLM(api_key)
     prompt = f"""
     You are a critical code analyzer. You will generate a report to highlight potential 
-    issues regarding code security and code performance. The file is {file_name}. 
+    issues regarding code {analysis_type}. The file is {file_name}. 
     You should return ONLY JSON. So in your response, just start with the JSON object, 
     and say nothing else. The JSON object should have only three types of keys, “critical”, 
     “moderate”, and low. Be reserved in handing out critical labels. The response 
@@ -49,13 +49,14 @@ def process_file(file_name, file_content, api_key, reportId):
     response times are slower than expected, affecting user experience." }}, {{ "low": 
     "User interface misalignments in the settings menu on mobile devices."}}, {{"low": 
     "Deprecated API usage in module X, though currently not affecting functionality."}}] . 
-    Remember to return only JSON. Here is the file content: {file_content} """
+    Remember to only return issues related to code {analysis_type}, and very important: 
+    return only JSON. Here is the file content: {file_content} """
     response = llm.generate_response(prompt, file_name)
     feed_back_to_nextjs(reportId, file_name, "completed", response)
     return file_name, response
 
 
-def analyze_github_repo(repo_url, reportId):
+def analyze_github_repo(repo_url, reportId, analysis_type):
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     print(f"API KEY {api_key}")
     explorer = GithubRepoExplorer(repo_url)
@@ -63,7 +64,9 @@ def analyze_github_repo(repo_url, reportId):
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = [
-            executor.submit(process_file, file_name, file_content, api_key, reportId)
+            executor.submit(
+                process_file, file_name, file_content, api_key, reportId, analysis_type
+            )
             for file_name, file_content in file_structure.items()
         ]
         results = [

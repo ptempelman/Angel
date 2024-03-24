@@ -15,6 +15,8 @@ export default function TopMenu() {
     const { isLoaded: userLoaded, isSignedIn, user } = useUser();
     const router = useRouter();
     const [githubUrl, setGithubUrl] = useState('');
+    const [analysisType, setAnalysisType] = useState('security');
+
     const [reportId, setReportId] = useState('');
     const [hasReportBeenCreated, setHasReportBeenCreated] = useState(false); // Track if the report has been created
 
@@ -54,7 +56,7 @@ export default function TopMenu() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ reportId: reportId, url: githubUrl }),
+                body: JSON.stringify({ reportId: reportId, url: githubUrl, analysisType: analysisType }),
             });
 
             if (!response.ok) {
@@ -80,6 +82,18 @@ export default function TopMenu() {
                         className="border-2 border-white text-black py-2 px-4 rounded focus:outline-none focus:border-blue-500 transition-colors"
                         style={{ marginRight: '1rem' }}
                     />
+
+                    <select
+                        className="border-2 border-white text-black py-2 px-4 rounded focus:outline-none focus:border-blue-500 transition-colors"
+                        style={{ marginRight: '1rem' }}
+                        onChange={(e) => setAnalysisType(e.target.value)}
+                    >
+                        <option value="security">Security</option>
+                        <option value="performance">Performance</option>
+                        <option value="maintainability">Maintainability</option>
+                    </select>
+
+
                     <button
                         className="border-2 border-white text-white py-2 px-4 rounded hover:bg-white hover:text-black transition-colors"
                         onClick={handleApiCall}
