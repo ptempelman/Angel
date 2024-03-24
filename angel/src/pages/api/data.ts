@@ -31,19 +31,6 @@ export default async function handler(
             console.log(`Processing file: ${filename}`, result);
 
             // Save the file and status to the database
-            // createIssue({
-            //     reportId,
-            //     status,
-            //     filename,
-            //     description: "",
-            // });
-
-            res.status(202).json({ message: 'File is being processed', filename, result });
-            break;
-        case 'completed':
-            console.log(`File processing completed: ${filename}`, result);
-
-            // Save the result to the database
             try {
                 const issue = await db.issue.create({
                     data: {
@@ -53,9 +40,52 @@ export default async function handler(
                         description: result,
                     },
                 });
-                res.status(200).json({ message: 'File processing completed', issue });
+                res.status(200).json({ message: 'File processing notification received', issue });
             } catch (error) {
                 console.error('Error creating issue:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+
+            res.status(202).json({ message: 'File is being processed', filename, result });
+            break;
+        case 'completed':
+            console.log(`File processing completed: ${filename}`, result);
+
+            // Save the result to the database
+            try {
+
+                // Attempt to find the issue first
+                const existingIssue = await db.issue.findFirst({
+                    where: {
+                        reportId: reportId,
+                        filename: filename,
+                    },
+                });
+
+                if (existingIssue) {
+                    // If the issue exists, update it
+                    const updatedIssue = await db.issue.update({
+                        where: { id: existingIssue.id },
+                        data: {
+                            status: status,
+                            description: result,
+                        },
+                    });
+                } else {
+                    // If the issue does not exist, create a new one
+                    const newIssue = await db.issue.create({
+                        data: {
+                            reportId: reportId,
+                            filename: filename,
+                            status: status,
+                            description: result,
+                        },
+                    });
+                }
+
+                res.status(200).json({ message: 'File processing completed' });
+            } catch (error) {
+                console.error('Error updating issue:', error);
                 res.status(500).json({ error: 'Internal server error' });
             }
 
