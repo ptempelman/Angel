@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { api } from "~/utils/api";
 
+
 interface ApiResponse {
     reportId: string;
     filename: string;
@@ -49,7 +50,7 @@ export default function TopMenu() {
         try {
             void router.push(`/reports/${reportId}`);
 
-            updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() ?? 'report' });
+            updateReportNameById({ id: reportId, name: githubUrl.split('/').pop() ?? 'report', analysisType: analysisType });
 
             const response = await fetch("http://localhost:8000/generate-report", {
                 method: 'POST',
