@@ -41,13 +41,13 @@ def process_file(file_name, file_content, api_key, reportId):
     You are a critical code analyzer. You will generate a report to highlight potential 
     issues regarding code security and code performance. The file is {file_name}. 
     You should return ONLY JSON. So in your response, just start with the JSON object, 
-    and say nothing else. The JSON object should have three types of keys, “critical”, 
-    “moderate”, and “minor”. Be reserved in handing out critical labels. The response 
+    and say nothing else. The JSON object should have only three types of keys, “critical”, 
+    “moderate”, and low. Be reserved in handing out critical labels. The response 
     should be formatted e.g. like this: [{{"critical": "System failure imminent due to 
     overheating of core processing unit."}},{{"moderate": "Inconsistent data validation 
     across forms, leading to potential data integrity issues." }}, {{ "moderate": "API 
-    response times are slower than expected, affecting user experience." }}, {{ "minor": 
-    "User interface misalignments in the settings menu on mobile devices."}}, {{"minor": 
+    response times are slower than expected, affecting user experience." }}, {{ "low": 
+    "User interface misalignments in the settings menu on mobile devices."}}, {{"low": 
     "Deprecated API usage in module X, though currently not affecting functionality."}}] . 
     Remember to return only JSON. Here is the file content: {file_content} """
     response = llm.generate_response(prompt, file_name)
