@@ -1,7 +1,7 @@
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import Image from 'next/image';
 import { useRouter } from "next/router";
-import Image from 'next/image'
-import logo from '../../public/logo2.png'
+import logo from '../../public/logo2.png';
 
 export default function TopBar() {
     const { isLoaded: userLoaded, isSignedIn, user } = useUser();
@@ -21,12 +21,11 @@ export default function TopBar() {
 
     return (
         <div className="flex items-center justify-between w-full px-4 py-2 bg-white/10">
-            <button onClick={() => router.push('/')}
-                className="text-white hover:text-blue-500 transition-colors">
+            <button onClick={() => router.push('/')} className="flex items-center">
                 <Image src={logo} alt="Logo" width={40} height={40} />
-                {/* Apply the dynamic gradientTextStyle here */}
-                <h1 className="text-3xl font-bold" style={gradientTextStyle}>ANGEL</h1>
+                <h1 className="text-3xl font-bold ml-2" style={gradientTextStyle}>ANGEL</h1>
             </button>
+
             {!isSignedIn && <SignInButton />}
             {isSignedIn && <UserButton appearance={{
                 elements: {
