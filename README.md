@@ -1,6 +1,15 @@
- # Angel - AI-Powered Code Analysis Platform Angel is an AI-powered code analysis platform that identifies security vulnerabilities, performance bottlenecks, and maintainability issues in GitHub repositories. It leverages the powerful Claude AI to perform in-depth static analysis on code files and generates comprehensive reports with actionable insights. 
- ## Features - Analyze GitHub repositories for security, performance, and maintainability issues - Generate detailed reports with issue descriptions and severity levels - Intuitive and user-friendly web interface - Fast and efficient analysis using multi-threaded processing - Integration with Claude AI for intelligent code analysis 
- ## Getting Started ### Prerequisites - Node.js (version 14 or above) - Python (version 3.7 or above) - MySQL database 
+# Angel
+AI-Powered Code Analysis Platform Angel is an AI-powered code analysis platform that identifies security vulnerabilities, performance bottlenecks, and maintainability issues in GitHub repositories. It leverages the powerful 
+Claude AI to perform in-depth static analysis on code files and generates comprehensive reports with actionable insights. 
+
+## Features 
+Analyze GitHub repositories for security, performance, and maintainability issues - Generate detailed reports with issue descriptions and severity levels - Intuitive and user-friendly web interface - Fast and efficient 
+analysis using multi-threaded processing - Integration with Claude AI for intelligent code analysis 
+
+## Getting Started 
+
+### Prerequisites
+ Node.js (version 14 or above) - Python (version 3.7 or above) - MySQL database 
  
  ### Installation 
    1. Clone the repository: git clone https://github.com/yourusername/angel.git cd angel
