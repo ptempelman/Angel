@@ -13,7 +13,7 @@ analysis using multi-threaded processing - Integration with Claude AI for intell
 ![Screenshot 2024-03-24 at 2 57 49 PM](https://github.com/ptempelman/Angel/assets/93888864/b60fc2c7-e3e1-4a3f-aa10-14bec8dd8de9)
 
 
-# ##Inspiration
+### Inspiration
 
 The inspiration for this project is to empower developers and teams to improve the quality of their codebases by identifying security, performance, and maintainability issues in their GitHub repositories. We wanted to create a tool that makes it easy to get valuable insights and recommendations to enhance code quality.
 
